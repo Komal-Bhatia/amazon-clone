@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
-import amazonReducer  from '../redux/amazonSlice';
+import amazon from './amazon';
 
 export const store = configureStore({
-  reducer: {amazonReducer},
+  reducer: {amazon},
 });

@@ -6,13 +6,26 @@ import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ApiIcon from '@mui/icons-material/Api';
 import { useDispatch } from 'react-redux';
-import { addToCart } from '../../redux/amazonSlice';
+import { addToCart } from '../../redux/amazon';
 
 const Products = () => {
     const dispatch = useDispatch()
     const data=useLoaderData()
     const productData = data.data;
+    const addToCartAction = async (items) => {
+        dispatch(addToCart(items))
+    //    await dispatch(addToCart({
+    //         id:items.id,
+    //         title: items.title,
+    //         description:items.description,
+    //         price:items.price,
+    //         category:items.category,
+    //         image:items.image,
+    //         quantity:1,
+    //     }))
+    }
   return (
+    <>
     <div className='max-w-screen-2xl mx-auto grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 xl:gap-10'>
       {
         productData.map((items) =>(
@@ -50,21 +63,14 @@ const Products = () => {
                             <GradeIcon />
                         </div>
                     </div>
-                    <button onClick={() => dispatch(addToCart({
-                        id:items.id,
-                        title: items.title,
-                        description:items.description,
-                        price:items.price,
-                        category:items.category,
-                        image:items.image,
-                        quantity:1,
-                    }))} className='w-full font-titleFont font-medium text-base bg-gradient-to-tr from-yellow-400 to-yellow-200 border hover:from-yellow-300 hover:to-yellow-300 border-yellow-500 hover:border-yellow-700 active:bg-gradient-to-bl active:from-yellow-400 active:to-yellow-500 duration-200 py-1.5 rounded-md mt-3'>Add to Cart</button>
+                    <button onClick={() => addToCartAction(items)} className='w-full font-titleFont font-medium text-base bg-gradient-to-tr from-yellow-400 to-yellow-200 border hover:from-yellow-300 hover:to-yellow-300 border-yellow-500 hover:border-yellow-700 active:bg-gradient-to-bl active:from-yellow-400 active:to-yellow-500 duration-200 py-1.5 rounded-md mt-3'>Add to Cart</button>
                 </div>
             </div>
         ))
       }
 
     </div>
+  </>
   )
 }
 
