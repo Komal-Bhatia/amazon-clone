@@ -1,2 +1,2 @@
 # amazon-clone
-React, Redux
+React JS, Redux
