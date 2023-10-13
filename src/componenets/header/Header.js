@@ -12,15 +12,17 @@ import { useSelector } from 'react-redux';
 
 const Header = () => {
     const [showAll, setShowAll] = useState(false);
-    const products = useSelector((state) => state.amazonReducer.products);
+    const products = useSelector((state) => state.amazon.products);
     console.log(products);
   return (
     <div className='w-full sticky top=0 z-50'>
       <div className='max-w-container bg-black text-white px-4 py-3 flex items-center gap-4'>
         {/* Logo */}
-        <div className="headerHover">
-            <img className="mt-2 w-24" src={logo} alt="logo" />
-        </div>
+       <Link to='/'>
+            <div className="headerHover">
+                <img className="mt-2 w-24" src={logo} alt="logo" />
+            </div>
+       </Link>
         {/* Delivery To */}
         <div className="headerHover hidden mdl:inline-flex">
             <LocationOnIcon/>
@@ -67,11 +69,13 @@ const Header = () => {
             <p className='text-sm font-semibold -mt-1 text-WhiteText'>& Orders</p>
         </div>
         {/* Cart */}
-        <div className='flex items-start justify-center px-2 h-[80%] border border-transparent hover:border-white cursor-pointer duration-100 relative'>
-            <ShoppingCartIcon />
-            <p className='text-xs font-semibold mt-3 text-WhiteText'>Cart 
-                <span className='absolute text-xs -top-1 left-6 font-semibold p-1 h-4 bg-[#f3a847] text-amazon_light rounded-full flex justify-center items-center'>{products.length > 0 ? products.length:0}</span></p>
-        </div>
+        <Link to='/cart'>
+            <div className='flex items-start justify-center px-2 h-[80%] border border-transparent hover:border-white cursor-pointer duration-100 relative'>
+                <ShoppingCartIcon />
+                <p className='text-xs font-semibold mt-3 text-WhiteText'>Cart 
+                    <span className='absolute text-xs -top-1 left-6 font-semibold p-1 h-4 bg-[#f3a847] text-amazon_light rounded-full flex justify-center items-center'>{products.length>0?products.length:0}</span></p>
+            </div>
+        </Link>
       </div>
       <HeaderBottom />
     </div>

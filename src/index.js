@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import "slick-carousel/slick/slick.css"; 
+import { PersistGate } from 'redux-persist/integration/react'
 import { Provider } from 'react-redux';
-import { store } from './redux/store';
+import { store, persistor } from './redux/store';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <StrictMode>
+    <Provider store={store}>
+     <PersistGate loading="loading" persistor={persistor}>
+     <App />
+     </PersistGate>
+    </Provider>
+  </StrictMode>
 );
