@@ -1,9 +1,15 @@
 import React, { useState } from 'react'
 import { amazonLogoBlack } from '../assets/images/index'
 import InfoIcon from '@mui/icons-material/Info';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { RotatingSquare } from 'react-loader-spinner';
+import {motion} from 'framer-motion';
 
 const Registration = () => {
+    const auth = getAuth();
+    const navigate = useNavigate();
+
     const [clientName, setClientName]=useState("");
     const [clientMobile, setClientMobile]=useState("");
     const [clientEmail, setClientEmail]=useState("");
@@ -16,7 +22,11 @@ const Registration = () => {
     const [errClientEmail, setErrClientEmail]=useState("");
     const [errClientPsw, setErrClientPsw]=useState("");
     const [errClientCpsw, setErrClientCpsw]=useState("");
+    const [firebaseErr, setFirebaseErr]=useState("");
 
+    // Loding state
+    const [loading, setLoading] = useState(false);
+    const [successMsg, setsuccessMsg] = useState("");
     //email validates function
     const emailvalidates = (clientEmail) =>{
         return String(clientEmail)
@@ -27,12 +37,15 @@ const Registration = () => {
     //Handle functions
     const handleName = (e)=>{
         setClientName(e.target.value)
+        console.log(clientName);
         setErrClientName("")
     }
 
     const handleEmail =(e)=>{
         setClientEmail(e.target.value)
         setErrClientEmail("")
+        console.log(clientEmail);
+        setFirebaseErr("")
     }
 
     const handleMobile =(e)=>{
@@ -85,16 +98,40 @@ const Registration = () => {
             }
         }
 
-    }
+    
 // need to make feilds empty
-    if(clientName && clientEmail && emailvalidates(clientEmail) && clientMobile && clientPsw && clientCpsw){
-            console.log(clientName + ","+clientEmail+","+clientMobile+","+clientPsw+","+clientCpsw);
-            setClientName("");
-            setClientEmail("");
-            setClientCpsw("");
-            setClientMobile("");
-            setClientPsw("");
+    if(clientName && clientEmail && emailvalidates(clientEmail) && clientMobile && clientPsw && clientCpsw === clientPsw && clientPsw.length>=6){
+        setLoading(true);
+            createUserWithEmailAndPassword(auth, clientEmail, clientPsw)
+                .then((userCredential) => {
+                   // update username and profile pic
+                    updateProfile(auth.currentUser, {
+                        displayName: clientName, photoURL: "https://example.com/jane-q-user/profile.jpg"
+                      });
+                    // Signed up 
+                    const user = userCredential.user;
+                    setLoading(false);
+                    setsuccessMsg("Account Created Successfully!");
+                    setTimeout(()=>{
+                        navigate("/login");
+                    },3000);
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        if(errorCode.includes("auth/email-already-in-use")){
+                            setFirebaseErr("Email Already in use, Try Another One")
+                        }
+                    });
+
+                setClientName("");
+                setClientEmail("");
+                setClientCpsw("");
+                setClientMobile("");
+                setClientPsw("");
+                setFirebaseErr("");
     }
+}
   return (
     <div className='w-full'>
       <div className='w-full bg-gray-100 pb-10'>
@@ -144,6 +181,13 @@ const Registration = () => {
                         <span className='italic font-titleFont font-extrabold text-base pr-3'>!</span>{errClientEmail}</p>
                     )
                   }
+
+                 {
+                    firebaseErr && (
+                        <p className='text-red-600 text-xs font-semibold tracking-wide flex-items-center gap-2 -mt-1.5'>
+                        <span className='italic font-titleFont font-extrabold text-base pr-3'>!</span>{firebaseErr}</p>
+                    )
+                  }
                 </div>
                 <div className='flex flex-col gap-2'>
                   <p className='text-sm font-medium'>Password</p>
@@ -178,6 +222,34 @@ const Registration = () => {
                 <button onClick={handleRegistraion} className='w-full py-1.5 text-sm font-normal rounded-sm bg-gradient-to-t from-[#f0c14b] hover:bg-gradient-to-b border border-zinc-400 active:border-yellow-800 active:shadow-amazonInput'>
                   Continue
                 </button>
+                {
+                    loading && (
+                        <div className='flex justify-center'>
+                            <RotatingSquare
+                            height="100"
+                            width="100"
+                            color="#febd69"
+                            ariaLabel="rotating-square-loading"
+                            strokeWidth="4"
+                            wrapperStyle={{}}
+                            wrapperClass=""
+                            visible={true}
+                            />
+                        </div>
+                    )
+                }
+                {
+                    successMsg && (
+                        <div>
+                            <motion.p
+                            initial={{y:10 , opacity:0}}
+                            animate={{y:0, opacity:1}}
+                            transition={{duration:0.5}}
+                            className='text-base font-titleFont font-semibold text-green-500 border-[1px] border-green-500 px-2 text-center'
+                            >{successMsg}</motion.p>
+                        </div>
+                    )
+                }
             </div>
             <div className='w-full text-xs mt-4 leading-4 text-black'>
                 <p>Already have an account? 

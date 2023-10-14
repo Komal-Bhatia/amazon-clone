@@ -4,10 +4,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SidenavContent from './SidenavContent';
 import {motion} from 'framer-motion';
+import { useSelector } from 'react-redux';
 
 
 const HeaderBottom = () => {
     const ref=useRef();
+    const userInfo = useSelector((state) => state.amazon.userInfo);
     const [sidebar, setSidebar] = useState(false);
     useEffect(()=>{
         document.body.addEventListener("click", (e)=>{
@@ -34,7 +36,13 @@ const HeaderBottom = () => {
                     <motion.div ref={ref} initial={{x:-500,opacity:0}} animate={{x:0, opacity:1}}  transition={{duration:.5}} className='w-[80%]  md:w-[350px] h-full bg-white border border-black'>
                         <div className='w-full bg-amazon_light text-white px-6 py-2 flex itmes-center gap-4'>
                             <AccountCircleIcon />
-                            <h3 className='font-titleFont font-bold text-lg tracking-wide'>Hello, Sign In</h3>
+                            {
+                              userInfo ? (
+                                <h3 className='font-titleFont font-bold text-lg tracking-wide'>{userInfo.userName}</h3>
+                              ):(
+                                <h3 className='font-titleFont font-bold text-lg tracking-wide'>Hello, Sign In</h3>
+                              )
+                            }
                         </div>
                        <SidenavContent title="Trending" one="Best Selers" two="New Releases" three="Movers & Shakers" />
                        <SidenavContent title="Digital Content & Devices" one="Echo & Alexa" two="Fire TV" three="Amazon Prime Videos"  four="Amazon Prime Music" />
